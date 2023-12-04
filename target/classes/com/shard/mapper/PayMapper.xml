@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shard.mapper.PayMapper">
+	<insert id="payInsert">
+		insert into pay(orderId, email, payTotal, payMethod) values(#{orderId},#{email},#{payTotal},#{payMethod})
+	</insert>
+	
+	<!-- 결제성공 -->
+	<delete id="cartDelete">
+		delete from detailcart where cartNum = #{cartNum} and itemNum IN 
+		<foreach collection="itemNumList" item="itemNum" open="(" separator="," close=")">
+        #{itemNum}
+    	</foreach>
+	</delete>
+	<update id="useCouponIssuanceUpdate">
+		update couponIssuance set orderId = #{orderId} where issueNum = #{issueNum}
+	</update>
+	<update id="payCompleteUpdate">
+		update pay set payComplete = 1 where orderId = #{orderId}
+	</update>
+	<update id="ordersUpdate">
+		update orders set usePoint = #{usePoint}, orderComplete = 1 where orderId = #{orderId}
+	</update>
+	<update id="customerPointUpdate">
+		update customer set point = point - #{usedpoint} where email = #{email}
+	</update>
+	<select id="getTotalAmountForLast3Months" resultType="int">
+	    select SUM(totalPrice) AS totalAmount
+	    from orders
+	    where email = #{email} and orderComplete = 0 and orderDate >= (CURDATE() - INTERVAL 3 MONTH);
+	</select>
+	<update id="membershipUpdate">
+		update customer set memNum = #{memNum} where email = #{email}
+	</update>
+</mapper>

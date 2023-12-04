@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shard.mapper.OrdersMapper">
+    
+
+<!-- pay로 넘어갈때 주문, 주문상세 생성 -->
+    <insert id="orderInsert">
+	    insert into orders(totalPrice,deliverZipCode, userDeliverAddr, usePoint, email, deliverDetailAddr, deliverName, deliverPhone)
+	    values (#{totalPrice}, #{deliverZipCode}, #{userDeliverAddr}, #{usePoint}, #{email}, #{deliverDetailAddr}, #{deliverName}, #{deliverPhone})
+	</insert>
+<!-- 	마지막으로 insert한 orderId	 -->
+	<select id="getLastInsertId" resultType="int">
+        SELECT LAST_INSERT_ID()
+    </select>
+	<insert id="detailOrderInsert">
+		insert into detailorder(itemNum, cnt, size, orderId) values(#{itemNum},#{cnt},#{size},#{orderId})
+	</insert>
+	
+    <!-- 주문자정보, 기본배송지정보, 주문상품 list read-->
+	<select id="getCustomer" resultType="com.shard.domain.ShardMemberVO">
+		select username, phone from customer where email = #{email}
+	</select>
+<!-- 	<select id="getOrder" resultType="com.shard.domain.OrdersVO">
+		select * from orders where email = #{email}
+	</select> -->
+	<select id="getDetailOrder" resultType="com.shard.domain.DetailOrderVO">
+		select * from detailorder where orderId = #{orderId}
+	</select>
+	<select id="getDetailOrderItems" resultType="com.shard.domain.ItemVO">
+	    select * from item
+	    where itemNum IN
+    <foreach collection="itemNumList" item="itemNum" open="(" separator="," close=")">
+        #{itemNum}
+    </foreach>
+	</select>
+	<insert id="addDeliverAddr">
+		insert into deliverAddr(addrName, zipCode, userAddr, detailAddr, email, defaultWhether)
+		values(#{addrName}, #{zipCode}, #{userAddr}, #{detailAddr}, #{email}, #{defaultWhether})
+	</insert>
+	<update id="deliverAddrUpdate">
+		 update deliverAddr 
+   		 set addrName = #{dvo.addrName}, zipCode = #{dvo.zipCode}, userAddr = #{dvo.userAddr},
+       		 detailAddr = #{dvo.detailAddr}, defaultWhether = #{dvo.defaultWhether}
+   		 where addrNum = #{addrNum}
+	</update>
+	<select id="getCouponIssuance" resultType="com.shard.domain.CouponIssuanceVO">
+		select * from couponIssuance where email = #{email}
+	</select>
+	<select id="getCoupon" resultType="com.shard.domain.CouponVO">
+		select couponName, discountRate, discountAmount, minAmount from coupon
+		where couponNum IN
+    <foreach collection="couponNumList" item="couponNum" open="(" separator="," close=")">
+        #{couponNum}
+    </foreach>
+	</select>
+	<select id="getDefaultAddress" resultType="int">
+		select addrNum from deliverAddr where email = #{email} and defaultWhether = 1
+	</select>
+	<update id="defaultAddressUpdate">
+		update deliverAddr set defaultWhether = 0 where addrNum = #{addrNum}
+	</update>
+	<!-- 주문완성 안할경우 -->
+	<delete id="ordersDelete">
+		delete from orders where orderId = #{orderId}
+	</delete>
+	<delete id="detailOrdersDelete">
+		delete from detailorder where orderId = #{orderId}
+	</delete>
+	<!-- 주문취소 -->
+	<select id="getUsePoint" resultType="int">
+		select usePoint from detailorder where orderId = #{orderId}
+	</select>
+	<update id="couponReturnUpdate">
+		update coupon set orderId = NULL where orderId = #{orderId}
+	</update>
+	<update id="payCompleteReturnUpdate">
+		update pay set payComplete = 0 where orderId = #{orderId}
+	</update>
+	<update id="customerPointReturnUpdate">
+		update customer set point = point + #{usePoint} where email = #{email}
+	</update>
+	<!-- 주문확정시 멤버십 Update -->
+	<select id="getTotalAmountForLast3Months" resultType="int">
+	    select sum(paytotal) from pay
+		where email = #{email} and payComplete = 1 and payDate >= DATE_SUB(NOW(), INTERVAL 3 MONTH);
+	</select>
+	<update id="membershipUpdate">
+		update customer set memNum = #{memNum} where email = #{email}
+	</update>
+</mapper>
