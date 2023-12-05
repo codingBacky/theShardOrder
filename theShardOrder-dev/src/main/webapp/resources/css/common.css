@@ -1,0 +1,58 @@
+@charset "UTF-8";
+
+* {padding: 0; margin:0;
+font-family: 'Noto Sans KR', sans-serif;}
+
+::selection {
+	background: #4da5c2;
+	color:#fff;
+}
+
+a {text-decoration: none; color:#000;}
+
+ul,li,ol {list-style: none; margin:0; padding:0;}
+
+input {accent-color: #8581d6;}
+
+.mainWrap {position:relative; margin: auto 0; width:100%; }
+
+.header {height:130px; width:100%;}
+
+/* 탑 오른쪽 네비 */
+.topRightNav {margin:0 100px; height:50px;}
+.topRightNav ul {display:flex; justify-content: space-evenly; float:right; width:250px; margin-top:20px;}
+.topRightNav a {color:#999; font-size:13px; font-weight:300;}
+
+/* 메인 네비 */
+.mainNav {height:80px; margin:0 100px;  width:1424px; }
+.mainNav > a {float:left; display: block; font-size:32px; width:160px; height:60px;}
+.mainNav > a > img {width:160px; height:60px;}
+.mainNav > ul {float:left; margin-left:70px; margin-top:20px; width:600px;}
+.mainNav > ul li {margin-right:15px; position:relative; float:left;}
+.mainNav > ul li a {font-size:15px; color:#000; line-height:26px;}
+.mainNav > ul li a:hover {color:#8581d6;}
+.mainNav > ul li:nth-child(2):after {content:"N"; position:absolute; top:-10px; color:#8581d6; font-weight:bold; font-size:12px; right:-9px;}
+
+.division_line {margin:3px 2% 0;}
+.division_line > span {display:inline-block; width:1px; height:15px; background-color:#000;}
+
+/* 푸터 */
+.footer_wrap {position:relative; background-color:#f3f3f4; font-size:13px; color:#767678;}
+
+.foot {width:1350px; margin:0 auto; overflow:hidden; padding:80px 0;}
+
+.foot_info1 {float:left;}
+.foot_info1 > ul {overflow:hidden; margin-bottom:30px;}
+.foot_info1 > ul li {float:left; margin-left:30px; font-weight:bold;}
+.foot_info1 > ul li a {color:#222; font-size:15px;}
+.foot_info1 > ul li:first-child {margin-left:0;}
+.foot_info1 p {line-height:30px; font-size:15px; font-weight:300; text-align:left;}
+.foot_info1 p:last-child {color:#000; font-weight:400;}
+
+.foot_info2 {float:right;}
+.foot_info2 > ul {float:left; margin-right:55px;}
+.foot_info2 li {line-height:30px; font-weight:bold; text-align:right;}
+.foot_info2 li a {color:#222; font-size:15px; font-weight:bold;}
+.foot_info2 > div {float:left; text-align:right;}
+.foot_info2 > div > p {font-size:47px; font-weight:bold; margin-bottom:12px; color:#222; margin-top:-12px;}
+.foot_info2 > div span {display:block; line-height:27px; font-size:15px; font-weight:400;}
